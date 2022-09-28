@@ -1,0 +1,59 @@
+service: aws-lambda-crud-node
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  region: sa-east-1
+  iamRoleStatements:
+   - Effect: Allow
+     Action:
+       - dynamodb:*
+     Resource:
+       - arn:aws:dynamodb:sa-east-1:389814715743:table/crudPrueba
+
+functions:
+  hello:
+    handler: src/handler.hello
+    events:
+      - httpApi:
+          path: /
+          method: get
+  agregarRegistro:
+    handler: src/agregarRegistro.agregarRegistro
+    events:
+      - httpApi:
+          path: /registros
+          method: post
+  listarRegistro:
+    handler: src/listarRegistro.listarRegistro
+    events:
+      - httpApi:
+          path: /registros
+          method: get
+  obtenerRegistro:
+    handler: src/obtenerRegistro.obtenerRegistro
+    events:
+      - httpApi:
+          path: /registros/{id}
+          method: get
+  actRegistro:
+    handler: src/actRegistro.actRegistro
+    events:
+      - httpApi:
+          path: /registros/{id}
+          method: put
+
+resources: 
+  Resources:
+    crudPrueba:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: crudPrueba
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions: 
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
